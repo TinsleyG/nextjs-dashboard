@@ -26,12 +26,16 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
-      
+
+      - name: Zip artifact for deployment job
+        run: |
+          zip -r node-app.zip .
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: .
+          path: node-app.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -47,7 +51,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: node-app
-      
+
+      - name: Unzip artifact from build job
+        run: |
+          unzip node-app.zip
+          rm node-app.zip
+
       - name: Login to Azure
         uses: azure/login@v1
         with:
@@ -62,4 +71,3 @@ jobs:
           app-name: 'nextjs-dashboard'
           slot-name: 'Production'
           package: .
-          
