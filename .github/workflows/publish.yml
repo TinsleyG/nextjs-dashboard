@@ -21,11 +21,15 @@ jobs:
       - name: Build with Next.js 🏗️
         run: npx next build
 
+      - name: Compress artifact for deployment job
+        run: |
+          zip -r node-app.zip .
+
       - name: Upload artifact 📡
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: .
+          path: node-app.zip
 
   deploy:
     runs-on: ubuntu-latest
